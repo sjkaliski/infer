@@ -2,8 +2,8 @@
 
 Included are examples on popular models including 
 
-- [MNIST](/mnist)
-- [Inception](/inception)
+- [MNIST](mnist)
+- [Inception](inception)
 
 ## Setup
 
