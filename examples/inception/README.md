@@ -4,7 +4,9 @@ This is an example http API that takes an input image and returns a list of pred
 
 ## Setup
 
-First build the required container in the [parent directory](../).
+1. Build the required container in the [parent directory](../).
+
+2. Build and run the example.
 
 ```
 $ docker build -t sjkaliski/infer/examples/inception -f examples/inception/Dockerfile .

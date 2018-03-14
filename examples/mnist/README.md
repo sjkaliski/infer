@@ -5,7 +5,9 @@ and can be found in [mnist.py](mnist.py) (taken from their [examples](https://gi
 
 ## Usage
 
-First build the required container in the [parent directory](../).
+1. Build the required container in the [parent directory](../).
+
+2. Build and run the example.
 
 ```
 $ docker build -t sjkaliski/infer/examples/mnist .
