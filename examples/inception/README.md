@@ -1,6 +1,6 @@
 # inception
 
-This is an example http API that takes an input image and returns a list of predictions ordered by confidence. It uses the Inception v3 model. It auto-detects the image format and crops / resizes per the model requirements.
+This is an example http API that takes an input image and returns a list of predictions ordered by confidence. It uses the Inception v1 model. It auto-detects the image format and crops / resizes per the model requirements.
 
 ## Setup
 
@@ -9,7 +9,7 @@ This is an example http API that takes an input image and returns a list of pred
 2. Build and run the example.
 
 ```
-$ docker build -t sjkaliski/infer/examples/inception -f examples/inception/Dockerfile .
+$ docker build -t sjkaliski/infer/examples/inception .
 $ docker run --rm -it -p 8080:8080 sjkaliski/infer/examples/inception
 ```
 

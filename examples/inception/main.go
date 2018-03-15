@@ -75,10 +75,10 @@ func main() {
 		Graph: graph,
 		Input: &infer.Input{
 			Key:        "input",
-			Dimensions: []int32{299, 299},
+			Dimensions: []int32{224, 224},
 		},
 		Output: &infer.Output{
-			Key:        "InceptionV3/Predictions/Softmax",
+			Key:        "output",
 			Dimensions: [][]float32{},
 		},
 	})

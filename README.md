@@ -13,7 +13,7 @@ This package provides abstractions for running inferences in TensorFlow models f
 
 The easiest way to get going is looking at some examples, two have been provided:
 
-1. [Image Recognition API using Inception v3](examples/inception).
+1. [Image Recognition API using Inception](examples/inception).
 2. [MNIST](examples/mnist)
 
 ## Setup
