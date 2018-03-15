@@ -21,7 +21,8 @@ func ExampleNew() {
 	}
 
 	graph := tf.NewGraph()
-	if err := graph.Import(model, ""); err != nil {
+	err = graph.Import(model, "")
+	if err != nil {
 		panic(err)
 	}
 
@@ -32,7 +33,7 @@ func ExampleNew() {
 			Dimensions: []int32{100, 100},
 		},
 		Output: &infer.Output{
-			Key: "input",
+			Key: "output",
 		},
 	})
 }
