@@ -66,7 +66,8 @@ func main() {
 	labels = strings.Split(labelsStr, "\n")
 
 	graph := tf.NewGraph()
-	if err := graph.Import(model, ""); err != nil {
+	err = graph.Import(model, "")
+	if err != nil {
 		panic(err)
 	}
 

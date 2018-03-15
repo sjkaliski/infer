@@ -1,6 +1,7 @@
 package infer
 
-// Prediction is the results.
+// Prediction represents a value and it's associated
+// confidence score.
 type Prediction struct {
 	Value      interface{} `json:"value"`
 	Confidence float32     `json:"confidence"`

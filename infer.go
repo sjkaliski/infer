@@ -15,32 +15,47 @@ import (
 	_ "image/png"
 )
 
-// Errors.
 var (
-	ErrValidInputOutputRequired = errors.New("a valid input/output is required")
+	// ErrValidInputOutputRequired occurs if an invalid Input or Output is provided.
+	ErrValidInputOutputRequired = errors.New("a valid Input/Putput is required")
 )
 
-// Model is an ML model.
+// Model is an ML model. It's composed of a computation graph and
+// an Input and Output. It provides methods for running inferences
+// usnig it's Graph, abiding by it's Input/Output.
 type Model struct {
 	Graph  *tf.Graph
-	Labels []interface{}
 	Input  *Input
 	Output *Output
 }
 
-// Input is an ML input.
+// Input is an ML layer. It is identified by a key and has dimensions
+// The dimensions are used to augment or resize the output as appropriate.
 type Input struct {
-	Key        string
+	// Key represents a layer in a TensorFlow model. The selection of a Key
+	// determines "where" the Input/Output occurs in the Graph.
+	Key string
+
+	// Dimensions represents the size of the input. It can be of any type but
+	// must contains the values expected by the layer. It may be used to
+	// augment or resize the input so that it conforms to the specified layer.
 	Dimensions interface{}
 }
 
-// Output is an ML output.
+// Output is an ML layer. It is identified by a key and has dimensions
+// The dimensions are used to augment or resize the output as appropriate.
 type Output struct {
-	Key        string
+	// Key represents a layer in a TensorFlow model. The selection of a Key
+	// determines "where" the Input/Output occurs in the Graph.
+	Key string
+
+	// Dimensions represents the size of the input. It can be of any type but
+	// must contains the values expected by the layer. It may be used to
+	// augment or resize the input so that it conforms to the specified layer.
 	Dimensions interface{}
 }
 
-// New returns a new infer.Model.
+// New returns a new Model.
 func New(model *Model) (*Model, error) {
 	if model.Input == nil || model.Output == nil {
 		return nil, ErrValidInputOutputRequired
@@ -54,11 +69,18 @@ func New(model *Model) (*Model, error) {
 }
 
 // ImageOptions represent configurable options when evaluating images.
+// Note: for now it is sparse, but included to keep the method signature
+// consistent as new options become available.
 type ImageOptions struct {
+	// IsGray represents whether the Model expects the input image
+	// to be grayscale or not. Specifically, whether the image has
+	// 3 channels or 1 channel.
 	IsGray bool
 }
 
-// FromImageWithContext evaluates an image.
+// FromImageWithContext evaluates an image with context. Optional ImageOptions
+// can be included to dictate the pre-processing of the input image. The method
+// returns an interface of results which can be cast to the appropriate type.
 func (m *Model) FromImageWithContext(ctx context.Context, r io.Reader, opts *ImageOptions) (interface{}, error) {
 	if ctx == nil {
 		panic("nil context")
