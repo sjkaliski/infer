@@ -27,7 +27,7 @@ func main() {
 	m, _ := infer.New(&infer.Model{
 		Graph: graph,
 		Input: &infer.Input{
-			Key:        "input_input",
+			Key:        "conv2d_1_input",
 			Dimensions: []int32{28, 28},
 		},
 		Output: &infer.Output{
