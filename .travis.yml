@@ -1,0 +1,17 @@
+sudo: required
+language: go
+go:
+  - 1.8.x
+  - 1.9.x
+  - master
+
+install:
+  - sudo curl -L "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.6.0.tar.gz" | sudo tar -C /usr/local -xz
+  - sudo ldconfig
+  - go get -t -v ./...
+
+script:
+  - go test -v -race ./...
+
+notifications:
+  email: false
