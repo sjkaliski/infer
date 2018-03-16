@@ -157,7 +157,7 @@ func (m *Model) fromImage(r io.Reader, opts *ImageOptions) (interface{}, error) 
 	// are the python docs, which are more thorough:
 	// https://www.tensorflow.org/api_docs/python/tf/image/crop_and_resize
 	cropSize := op.Const(scope.SubScope("crop_size"), m.Input.Dimensions)
-	boxes := op.Const(scope.SubScope("boxes"), [][]float32{[]float32{0, 0, 1, 1}})
+	boxes := op.Const(scope.SubScope("boxes"), [][]float32{{0, 0, 1, 1}})
 	boxInd := op.Const(scope.SubScope("box_ind"), []int32{0})
 	images := op.ExpandDims(
 		scope,

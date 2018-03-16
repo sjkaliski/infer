@@ -4,6 +4,7 @@ Infer is a Go package for running predicitions in TensorFlow models.
 
 [![Build Status](https://travis-ci.org/sjkaliski/infer.png)](https://travis-ci.org/sjkaliski/infer)
 [![GoDoc](https://godoc.org/github.com/sjkaliski/infer?status.svg)](https://godoc.org/github.com/sjkaliski/infer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sjkaliski/infer)](https://goreportcard.com/report/github.com/sjkaliski/infer)
 
 ## Overview
 
