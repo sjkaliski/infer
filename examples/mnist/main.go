@@ -41,26 +41,14 @@ func main() {
 	}
 	defer img.Close()
 
-	// Evaluate input.
 	opts := &infer.ImageOptions{
 		IsGray: true,
 	}
-	results, err := m.FromImage(img, opts)
+	predictions, err := m.FromImage(img, opts)
 	if err != nil {
 		panic(err)
 	}
 
-	possibilities := results.([][]float32)[0]
-
-	maxVal := float32(0)
-	maxIdx := 0
-
-	for i, p := range possibilities {
-		if p > maxVal {
-			maxVal = p
-			maxIdx = i
-		}
-	}
-
-	fmt.Println(maxIdx)
+	fmt.Println("Prediction:", predictions[0].Class)
+	fmt.Println("Confidence:", predictions[0].Score)
 }

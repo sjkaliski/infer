@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/sjkaliski/infer"
@@ -19,29 +18,16 @@ var (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	// Evaluate image.
 	opts := &infer.ImageOptions{
 		IsGray: false,
 	}
-	result, err := m.FromImageWithContext(r.Context(), r.Body, opts)
+
+	predictions, err := m.FromImageWithContext(r.Context(), r.Body, opts)
 	if err != nil {
 		panic(err)
 	}
 
-	// Convert results to prediction.
-	probabilities := result.([][]float32)[0][:len(labels)-1]
-	predictions := make(infer.Predictions, len(probabilities))
-	for i, p := range probabilities {
-		predictions[i] = &infer.Prediction{
-			Value:      labels[i],
-			Confidence: p,
-		}
-	}
-
-	sort.Sort(sort.Reverse(predictions))
-	predictions = predictions[:10]
-
-	data, err := json.Marshal(predictions)
+	data, err := json.Marshal(predictions[:10])
 	if err != nil {
 		panic(err)
 	}
@@ -61,9 +47,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	labelsStr := string(labelFile)
-	labels = strings.Split(labelsStr, "\n")
+	labels = strings.Split(string(labelFile), "\n")
 
 	graph := tf.NewGraph()
 	err = graph.Import(model, "")
@@ -72,7 +56,8 @@ func main() {
 	}
 
 	m, _ = infer.New(&infer.Model{
-		Graph: graph,
+		Graph:   graph,
+		Classes: labels,
 		Input: &infer.Input{
 			Key:        "input",
 			Dimensions: []int32{224, 224},

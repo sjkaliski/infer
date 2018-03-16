@@ -32,9 +32,12 @@ Installation instructions can be found [here](https://www.tensorflow.org/install
 
 To use infer, a TensorFlow [Graph](https://www.tensorflow.org/programmers_guide/graphs) is required, as well as a defined Input and Output.
 
+Classes may also be included, a slice of possible values. It's assumed the results of any model execution refer to these classes, in order. (e.g. 0 -> mountain, 1 -> cat, 2 -> apple).
+
 ```go
 m, _ = infer.New(&infer.Model{
   Graph: graph,
+  Classes: classes,
   Input: &infer.Input{
     Key:        "input",
     Dimensions: []int32{100, 100},
@@ -48,10 +51,17 @@ m, _ = infer.New(&infer.Model{
 Once a new model is defined, inferences can be executed.
 
 ```go
-results, _ := m.FromImage(file, &infer.ImageOptions{})
+predictions, _ := m.FromImage(file, &infer.ImageOptions{})
 ```
 
-Results are just an `interface{}` which can be cast as appropriate to inspect results.
+Predictions are returned sorted by score (most accurate first). A `Prediction` looks like
+
+```go
+Prediction{
+  Class: "mountain",
+  Score: 0.97,
+}
+```
 
 ### Graph
 
@@ -87,17 +97,13 @@ If you're not using a pre-trained model, the layers can be named, which can ease
 
 ### Analyzing Results
 
-At the moment, the resulting value (not the Tensor itself) is returned. This can be cast as necessary. For example, for MNIST
+In the [MNIST example](examples/mnist), we can execute a prediction and inspect results as so: 
 
 ```go
-results, err := m.FromImage(img, opts)
+predictions, err := m.FromImage(img, opts)
 if err != nil {
   panic(err)
 }
 
-possibilities := results.([][]float32)[0]
+// predictions[0].Class -> 8
 ```
-
-The results are a slice of a slice (length 10). The wrapping slice contains sets of results (infer does not support batch analysis yet). The interior slice is an array of 10 values ranging from 0.0-1.0, each indicating the probability of a certain number contained in the image.
-
-For convenience, an `infer.Predictions` type is included which implements `sort.Sort` and can be used to encapsulate results. Note: in the future these methods may return `infer.Predictions` directly.

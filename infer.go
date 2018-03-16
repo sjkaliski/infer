@@ -6,6 +6,7 @@ import (
 	"errors"
 	"image"
 	"io"
+	"sort"
 
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
@@ -24,9 +25,10 @@ var (
 // an Input and Output. It provides methods for running inferences
 // usnig it's Graph, abiding by it's Input/Output.
 type Model struct {
-	Graph  *tf.Graph
-	Input  *Input
-	Output *Output
+	Graph   *tf.Graph
+	Classes []string
+	Input   *Input
+	Output  *Output
 }
 
 // Input is an ML layer. It is identified by a key and has dimensions
@@ -81,35 +83,35 @@ type ImageOptions struct {
 // FromImageWithContext evaluates an image with context. Optional ImageOptions
 // can be included to dictate the pre-processing of the input image. The method
 // returns an interface of results which can be cast to the appropriate type.
-func (m *Model) FromImageWithContext(ctx context.Context, r io.Reader, opts *ImageOptions) (interface{}, error) {
+func (m *Model) FromImageWithContext(ctx context.Context, r io.Reader, opts *ImageOptions) ([]*Prediction, error) {
 	if ctx == nil {
 		panic("nil context")
 	}
 
 	c := make(chan error)
-	var results interface{}
+	var p []*Prediction
 	go func() {
 		var err error
-		results, err = m.fromImage(r, opts)
+		p, err = m.fromImage(r, opts)
 		c <- err
 	}()
 
 	for {
 		select {
 		case <-ctx.Done():
-			return results, ctx.Err()
+			return p, ctx.Err()
 		case err := <-c:
-			return results, err
+			return p, err
 		}
 	}
 }
 
 // FromImage evaluates an image.
-func (m *Model) FromImage(r io.Reader, opts *ImageOptions) (interface{}, error) {
+func (m *Model) FromImage(r io.Reader, opts *ImageOptions) ([]*Prediction, error) {
 	return m.FromImageWithContext(context.Background(), r, opts)
 }
 
-func (m *Model) fromImage(r io.Reader, opts *ImageOptions) (interface{}, error) {
+func (m *Model) fromImage(r io.Reader, opts *ImageOptions) ([]*Prediction, error) {
 	var imgBuf, tensorBuf bytes.Buffer
 	w := io.MultiWriter(&imgBuf, &tensorBuf)
 
@@ -200,7 +202,31 @@ func (m *Model) fromImage(r io.Reader, opts *ImageOptions) (interface{}, error) 
 		return nil, err
 	}
 
-	return result[0].Value(), nil
+	// Convert result to Predictions.
+	var scores []float32
+	if len(result[0].Shape()) == 1 {
+		scores = result[0].Value().([]float32)
+	} else {
+		scores = result[0].Value().([][]float32)[0]
+	}
+
+	predictions := make([]*Prediction, len(scores))
+	for i := range predictions {
+		var c interface{}
+		if len(m.Classes) > i {
+			c = m.Classes[i]
+		} else {
+			c = i
+		}
+
+		predictions[i] = &Prediction{
+			Class: c,
+			Score: scores[i],
+		}
+	}
+
+	sort.Sort(sort.Reverse(Predictions(predictions)))
+	return predictions, nil
 }
 
 // eval executes the inference using an input against the model graph.

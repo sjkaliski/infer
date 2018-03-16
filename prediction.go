@@ -1,10 +1,9 @@
 package infer
 
-// Prediction represents a value and it's associated
-// confidence score.
+// Prediction represents a class and it's associated score.
 type Prediction struct {
-	Value      interface{} `json:"value"`
-	Confidence float32     `json:"confidence"`
+	Class interface{}
+	Score float32
 }
 
 // Predictions is a list of Prediction.
@@ -19,5 +18,5 @@ func (ps Predictions) Swap(i, j int) {
 }
 
 func (ps Predictions) Less(i, j int) bool {
-	return ps[i].Confidence < ps[j].Confidence
+	return ps[i].Score < ps[j].Score
 }
