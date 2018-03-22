@@ -16,5 +16,5 @@ $ docker run --rm -it -p 8080:8080 sjkaliski/infer/examples/inception
 ## Usage
 
 ```
-curl -X "POST" "http://127.0.0.1:8080/" -H 'Content-Type: image/png' input.png
+curl -X "POST" "http://127.0.0.1:8080/" -H 'Content-Type: image/png' --data-binary @input.png
 ```
