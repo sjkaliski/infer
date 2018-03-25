@@ -20,7 +20,7 @@ var (
 func TensorToImage(t *tf.Tensor) (image.Image, error) {
 	dim := t.Shape()
 
-	if len(dim) != 4 {
+	if ok := 3 <= len(dim) && len(dim) <= 4; !ok {
 		return nil, ErrInvalidImageTensor
 	}
 
