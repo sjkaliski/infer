@@ -3,15 +3,24 @@ language: go
 go:
   - 1.8.x
   - 1.9.x
-  - master
+  - 1.10.x
+  - tip
+
+matrix:
+  allow_failures:
+    - go: tip
 
 install:
   - sudo curl -L "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.6.0.tar.gz" | sudo tar -C /usr/local -xz
   - sudo ldconfig
+  - go get -u golang.org/x/lint/golint
   - go get -t -v ./...
 
 script:
+  - test -z $(gofmt -s -l $(find . -type f -iname '*.go'))
+  - golint -set_exit_status ./...
   - go test -v -race ./...
+  - go vet ./...
 
 notifications:
   email: false
