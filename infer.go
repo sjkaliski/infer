@@ -18,7 +18,7 @@ import (
 
 var (
 	// ErrValidInputOutputRequired occurs if an invalid Input or Output is provided.
-	ErrValidInputOutputRequired = errors.New("a valid Input/Putput is required")
+	ErrValidInputOutputRequired = errors.New("a valid Input/Output is required")
 )
 
 // Model is an ML model. It's composed of a computation graph and
